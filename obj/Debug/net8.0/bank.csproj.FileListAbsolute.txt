@@ -1,0 +1,14 @@
+/home/clupai/sit232/5.2p/bank/bin/Debug/net8.0/bank
+/home/clupai/sit232/5.2p/bank/bin/Debug/net8.0/bank.deps.json
+/home/clupai/sit232/5.2p/bank/bin/Debug/net8.0/bank.runtimeconfig.json
+/home/clupai/sit232/5.2p/bank/bin/Debug/net8.0/bank.dll
+/home/clupai/sit232/5.2p/bank/bin/Debug/net8.0/bank.pdb
+/home/clupai/sit232/5.2p/bank/obj/Debug/net8.0/bank.GeneratedMSBuildEditorConfig.editorconfig
+/home/clupai/sit232/5.2p/bank/obj/Debug/net8.0/bank.AssemblyInfoInputs.cache
+/home/clupai/sit232/5.2p/bank/obj/Debug/net8.0/bank.AssemblyInfo.cs
+/home/clupai/sit232/5.2p/bank/obj/Debug/net8.0/bank.csproj.CoreCompileInputs.cache
+/home/clupai/sit232/5.2p/bank/obj/Debug/net8.0/bank.dll
+/home/clupai/sit232/5.2p/bank/obj/Debug/net8.0/refint/bank.dll
+/home/clupai/sit232/5.2p/bank/obj/Debug/net8.0/bank.pdb
+/home/clupai/sit232/5.2p/bank/obj/Debug/net8.0/bank.genruntimeconfig.cache
+/home/clupai/sit232/5.2p/bank/obj/Debug/net8.0/ref/bank.dll
