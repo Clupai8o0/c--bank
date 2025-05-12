@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/clupai/sit232/5.2p/bank/bank.csproj": {}
+    "/home/clupai/sit232/c--bank/bank.csproj": {}
   },
   "projects": {
-    "/home/clupai/sit232/5.2p/bank/bank.csproj": {
+    "/home/clupai/sit232/c--bank/bank.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/clupai/sit232/5.2p/bank/bank.csproj",
+        "projectUniqueName": "/home/clupai/sit232/c--bank/bank.csproj",
         "projectName": "bank",
-        "projectPath": "/home/clupai/sit232/5.2p/bank/bank.csproj",
+        "projectPath": "/home/clupai/sit232/c--bank/bank.csproj",
         "packagesPath": "/home/clupai/.nuget/packages/",
-        "outputPath": "/home/clupai/sit232/5.2p/bank/obj/",
+        "outputPath": "/home/clupai/sit232/c--bank/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/clupai/.nuget/NuGet/NuGet.Config"

@@ -1,51 +1,36 @@
-class DepositTransaction {
+class DepositTransaction: Transaction {
   private Account _account;
-  private decimal _amount;
-  private bool _executed;
-  private bool _success;
-  private bool _reversed;
 
   // Constructor
   // Initializes the transaction with the account and amount
-  public DepositTransaction(Account account, decimal amount) {
+  public DepositTransaction(Account account, decimal amount): base(amount) {
     this._account = account;
-    this._amount = amount;
-    this._executed = false;
-    this._success = false;
-    this._reversed = false;
   }
 
   // Getter
-  public bool Executed { get { return this._executed; } }
-  public bool Success { get { return this._success; } }
-  public bool Reversed { get { return this._reversed; } }
+  public override bool Success { get { return this._success; } }
 
   // Print withdraw transaction details
-  public void print() {
+  public override void Print() {
     Console.WriteLine("Deposit Transaction");
     Console.WriteLine("Amount: " + _amount);
-    Console.WriteLine("Executed: " + _executed);
+    Console.WriteLine("Executed: " + this.Executed);
     Console.WriteLine("Success: " + _success);
-    Console.WriteLine("Reversed: " + _reversed);
+    Console.WriteLine("Reversed: " + this.Reversed);
   }
 
-  public void execute() {
-    if (!this._executed) {
+  public override void Execute() {
+    if (!this.Executed) {
       if (this._account.deposit(this._amount)) {
-        this._success = true;
-        this._executed = true;
-      } else {
-        this._success = false;
-        this._executed = true;
-        throw new InvalidOperationException("Invalid amount");
-      }
+        base.Execute();
+      } else throw new InvalidOperationException("Invalid amount");
     } else throw new InvalidOperationException("Transaction already executed.");
   }
 
-  public void rollback() {
-    if (this._executed && this._success && !this._reversed) {
+  public override void Rollback() {
+    if (this.Executed && this._success && !this.Reversed) {
       this._account.withdraw(this._amount);
-      this._reversed = true;
+      base.Rollback();
     } else throw new InvalidOperationException("Transaction not executed or already reversed.");
   }
 }

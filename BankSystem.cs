@@ -1,12 +1,30 @@
 ﻿enum MenuOption {
-  Withdraw = 0,
-  Deposit = 1,
-  Print = 2,
-  Transfer = 3,
-  Quit = 4
+  AddAccount = 0,
+  Withdraw = 1,
+  Deposit = 2,
+  Print = 3,
+  Transfer = 4,
+  PrintTransactionHistory = 5,
+  Rollback = 6,
+  Quit = 7
 }
 
 class BankSystem {
+  static decimal getDecimal(string text) {
+    while (true) {
+      try {
+        Console.Write(text);
+        decimal value = Convert.ToDecimal(Console.ReadLine());
+        if (value < 0) {
+          Console.WriteLine("Value cannot be negative.");
+          continue;
+        }
+        return value;
+      } catch {
+        Console.WriteLine("Invalid input, make sure the input is a number.");
+      }
+    }
+  }
   static void StopConsoleReset() {
     Console.WriteLine("\nPress any key to continue...");
     Console.ReadKey();
@@ -16,93 +34,159 @@ class BankSystem {
     do {
       Console.Clear();
       Console.WriteLine();
-      Console.WriteLine("0. Withdraw");
-      Console.WriteLine("1. Deposit");
-      Console.WriteLine("2. Print");
-      Console.WriteLine("3. Transfer");
-      Console.WriteLine("4. Quit");
-      Console.Write("Enter your choice: ");
-      int option = Convert.ToInt32(Console.ReadLine());
+      Console.WriteLine("0. Add new Account");
+      Console.WriteLine("1. Withdraw");
+      Console.WriteLine("2. Deposit");
+      Console.WriteLine("3. Print");
+      Console.WriteLine("4. Transfer");
+      Console.WriteLine("5. Print Transaction History");
+      Console.WriteLine("6. Rollback Transaction");
+      Console.WriteLine("7. Quit");
 
-      // making sure choice is in bounds 
-      if (option >= 0 && option <= 3) {
-        // confirming choice
-        Console.Write("Are you sure? (y/n): ");
-        char confirm = Convert.ToChar(Console.ReadLine() ?? "");
-        if (confirm == 'y') // going through with choice
-          return (MenuOption)option;
-        else continue; // restarting loop
+      int option;
+      while (true) {
+        try {
+          Console.Write("Enter your choice: ");
+          option = Convert.ToInt32(Console.ReadLine());
+        } catch {
+          Console.WriteLine("Invalid input, make sure the input is a number.");
+          continue;
+        }
+
+        if (option < 0 || option > (int)MenuOption.Quit) {
+          Console.WriteLine("Invalid option. Please try again.");
+          continue;
+        }
+        break; // break out of loop
       }
 
-      // invalid choice
-      Console.WriteLine("Invalid option. Please try again.");
+      // confirming choice
+      while (true) {
+        try {
+          Console.Write("Are you sure? (y/n): ");
+          char confirm = Convert.ToChar(Console.ReadLine() ?? "");
+          if (confirm == 'y') // going through with choice
+            return (MenuOption)option;
+          else if (confirm == 'n') break; // restarting loop
+          else continue; // restarting loop
+        } catch {
+          Console.WriteLine("Invalid input, make sure the input is a character.");
+          continue;
+        }
+      }
     } while (true);
   }
 
-  static void DoDeposit(Account account) {
-    Console.Write("Enter amount to deposit: ");
-    decimal amount = Convert.ToDecimal(Console.ReadLine());
-    
-    DepositTransaction transaction = new DepositTransaction(account, amount);
-    try {
-      transaction.execute();
-      transaction.print();
-    } catch (InvalidOperationException e) {
-      Console.WriteLine(e.Message);
+  static void DoAddAccount(Bank bank) {
+    Console.Write("Enter account name: ");
+    string name = Console.ReadLine() ?? "";
+    decimal balance = getDecimal("Enter initial balance: ");
+    bank.addAccount(new Account(name, balance));
+
+  }
+
+  static Account? FindAccount(Bank bank, string text) {
+    Console.Write(text);
+    string name = Console.ReadLine() ?? "";
+    Account? account = bank.getAccount(name);
+    if (account == null) {
+      Console.WriteLine("Account not found.");
+      StopConsoleReset();
+      return null;
     }
+    return account;
+  }
+  static Account? FindAccount(Bank bank) {
+    return FindAccount(bank, "Enter account name: ");
+  }
+
+  static void DoDeposit(Bank bank) {
+    decimal amount = getDecimal("Enter amount to deposit: ");
+    Account? account = FindAccount(bank);
+    if (account == null) return; // if account not found
+    bank.executeTransaction(new DepositTransaction(account, amount));
     StopConsoleReset();
   }
 
-  static void DoWithdraw(Account account) {
-    Console.Write("Enter amount to withdraw: ");
-    decimal amount = Convert.ToDecimal(Console.ReadLine());
-
-    WithdrawTransaction transaction = new WithdrawTransaction(account, amount);
-    try {
-      transaction.execute();
-      transaction.print();
-    } catch (InvalidOperationException e) {
-      Console.WriteLine(e.Message);
-    }
+  static void DoWithdraw(Bank bank) {
+    decimal amount = getDecimal("Enter amount to withdraw: ");
+    Account? account = FindAccount(bank);
+    if (account == null) return; // if account not found
+    bank.executeTransaction(new WithdrawTransaction(account, amount));
     StopConsoleReset();
   }
 
-  static void DoPrint(Account account) {
+  static void DoPrint(Bank bank) {
+    Account? account = FindAccount(bank);
+    if (account == null) return; // if account not found
     account.print();
     StopConsoleReset();
   }
 
-  static void DoTransfer(Account fromAccount, Account toAccount) {
-    Console.Write("Enter amount to transfer: ");
-    decimal amount = Convert.ToDecimal(Console.ReadLine());
+  static void DoTransfer(Bank bank) {
+    Account? fromAccount = FindAccount(bank, "Enter sender account name: ");
+    if (fromAccount == null) return; // if account not found
 
-    TransferTransaction transaction = new TransferTransaction(fromAccount, toAccount, amount);
-    try {
-      transaction.execute();
-      transaction.print();
-    } catch (InvalidOperationException e) {
-      Console.WriteLine(e.Message);
+    Account? toAccount = FindAccount(bank, "Enter receiver account name: ");
+    if (toAccount == null) return; // if account not found
+
+    if (fromAccount == toAccount) {
+      Console.WriteLine("Cannot transfer to the same account.");
+      StopConsoleReset();
+      return;
     }
+
+    decimal amount = getDecimal("Enter amount to transfer: ");
+    bank.executeTransaction(new TransferTransaction(fromAccount, toAccount, amount));
+    StopConsoleReset();
+  }
+
+  // Rollback transaction
+  static void DoRollback(Bank bank) {
+    int id;
+    Transaction transaction;
+    while (true) {
+      try {
+        Console.Write("Enter transaction ID to rollback: ");
+        id = Convert.ToInt32(Console.ReadLine());
+        transaction = bank.getTransaction(id);
+        break; // break out of loop
+      } catch (Exception e) {
+        Console.WriteLine("Invalid input: " + e.Message);
+      }
+    }
+    bank.rollbackTransaction(transaction);
     StopConsoleReset();
   }
 
   static void Main() {
-    Account account = new Account("Samridh", 0);
-    Account account2 = new Account("John", 0);
+    Bank bank = new Bank();
+    bank.addAccount(new Account("Samridh", 2000));
+
     while (true) {
       MenuOption option = ReadUserOption();
       switch (option) {
+        case MenuOption.AddAccount:
+          DoAddAccount(bank);
+          break;
         case MenuOption.Withdraw:
-          DoWithdraw(account);
+          DoWithdraw(bank);
           break;
         case MenuOption.Deposit:
-          DoDeposit(account);
+          DoDeposit(bank);
           break;
         case MenuOption.Print:
-          DoPrint(account);
+          DoPrint(bank);
           break;
         case MenuOption.Transfer:
-          DoTransfer(account, account2);
+          DoTransfer(bank);
+          break;
+        case MenuOption.PrintTransactionHistory:
+          bank.printTransactionHistory();
+          StopConsoleReset();
+          break;
+        case MenuOption.Rollback:
+          DoRollback(bank);
           break;
         case MenuOption.Quit:
           return;

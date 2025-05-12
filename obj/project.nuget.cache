@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "HhHJLl5qCAxoiNe9oukuj5R44QPveuwo7BB8fVbB0N9ELtsLdwkmwQUO2JxCdWiwNgbggJWxngVXHsYBwf88nw==",
+  "dgSpecHash": "41J+SbJQXz1KI0WhbwLHQdUCRMILiyr1BIZ9DVDgm+hH9jPW2obQKTplgkGQlW206UHEMd/2rGeu/XmVHbjsgg==",
   "success": true,
-  "projectFilePath": "/home/clupai/sit232/5.2p/bank/bank.csproj",
+  "projectFilePath": "/home/clupai/sit232/c--bank/bank.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }
